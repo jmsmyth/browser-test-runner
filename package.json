@@ -1,0 +1,18 @@
+{
+  "name": "browser-test-runner",
+  "version": "0.1.0",
+  "description": "Run in browser test from the command line",
+  "main": "index.js",
+  "author": "James Smyth <jmsmyth@users.noreply.github.com>",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "browser-launcher2": "^0.4.6",
+    "cors": "^2.7.1",
+    "express": "^4.13.4",
+    "istanbul": "^0.4.2"
+  },
+  "bin": {
+    "browser-test-runner": "./bin/cli.js"
+  }
+}
