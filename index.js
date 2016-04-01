@@ -9,6 +9,9 @@ function logTests (tests, indent) {
       console.log(chalk.green(indent + '+ ' + test.title))
     } else {
       console.log(chalk.red(indent + '- ' + test.title))
+      console.log(chalk.gray(test.err.stack.split('\n').map(function (line) {
+        return indent + '  ' + line
+      }).join('\n')))
     }
   })
 }

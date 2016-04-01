@@ -26,7 +26,8 @@ function extractSuites (suites) {
         return {
           title: test.title,
           state: test.state,
-          duration: test.duration
+          duration: test.duration,
+          err: test.err
         }
       })
     }
