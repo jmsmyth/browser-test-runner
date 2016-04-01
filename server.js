@@ -17,35 +17,38 @@ exports.start = (options) => {
 
   function resultHandler (req, res) {
     const collector = new istanbul.Collector()
-    const reporter = new istanbul.Reporter(undefined, options.outputDir)
-
-    events.emit('result', {
-      id: req.body.id,
-      results: req.body.results
-    })
 
     req.body.coverage.forEach((c) => {
       collector.add(c)
     })
 
+    const reporter = new istanbul.Reporter(undefined, options.outputDir)
     reporter.add('html')
+    reporter.add('lcov')
     reporter.write(collector, false, () => {
       console.log('All reports generated')
+
       res.status(200).end()
+
+      events.emit('result', {
+        id: req.body.id,
+        results: req.body.results
+      })
     })
+
   }
 
   function errorHandler (req, res) {
-    console.log('error', req.body)
+    events.emit('error', req.body)
   }
 
   return new Promise((resolve, reject) => {
     var server = app
       .use(express.static(sourceDir))
-      .use(bodyParser({limit: '100mb'}))
+      .use(bodyParser.json({limit: '100mb'}))
       .use(cors())
       .post('/results', resultHandler)
-      .post('/results', errorHandler)
+      .post('/error', errorHandler)
       .listen(port, (err) => {
         err ? reject(err) : resolve({
           server: server,

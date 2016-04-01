@@ -10,42 +10,50 @@ function getParameterByName (name, url) {
   return decodeURIComponent(results[2].replace(/\+/g, ' '))
 }
 
-function runTests (mochaRunner) {
-  var results = []
-  var id = getParameterByName('id')
-  mochaRunner
-    .on('test', function (test) {})
-    .on('test end', function (test) {
-      results.push({
-        title: test.title,
-        state: test.state
+function post (url, data) {
+  var XHR = new XMLHttpRequest()
+  XHR.open('POST', url, true)
+  XHR.setRequestHeader('Content-type', 'application/json')
+  XHR.send(JSON.stringify(data))
+}
+
+function extractSuites (suites) {
+  return suites.map(function (suite) {
+    return {
+      title: suite.title,
+      suites: extractSuites(suite.suites || []),
+      tests: suite.tests.map(function (test) {
+        return {
+          title: test.title,
+          state: test.state,
+          duration: test.duration
+        }
       })
+    }
+  })
+}
+
+function init () {
+  var id = getParameterByName('id')
+  mocha.suite.afterAll(function () {
+    post('/results', {
+      id: id,
+      results: extractSuites(mocha.suite.suites),
+      coverage: [__coverage__]
     })
-    .on('end', function () {
-      console.log('sending')
-      var XHR = new XMLHttpRequest()
-      XHR.open('POST', '/results', true)
-      XHR.setRequestHeader('Content-type', 'application/json')
-      XHR.send(JSON.stringify({
-        id: id,
-        results: results,
-        coverage: [__coverage__]
-      }))
-    })
+
+  })
 }
 
 window.BrowserTestRunner = {
-  runTests: runTests
+  init: init
 }
 
 window.onerror = function (message, url, lineNumber) {
-  var XHR = new XMLHttpRequest()
-  XHR.open('POST', '/error', true)
-  XHR.setRequestHeader('Content-type', 'application/json')
-  XHR.send(JSON.stringify({
+  post('/error', {
     error: message,
     url: url,
     lineNumber: lineNumber
-  }))
+  })
   return true
 }
