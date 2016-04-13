@@ -37,10 +37,13 @@ function extractSuites (suites) {
 function init () {
   var id = getParameterByName('id')
   mocha.suite.afterAll(function () {
+    var coverage = []
+    if (__coverage__) coverage.push(__coverage__)
+    if (_$coffeeIstanbul) coverage.push(_$coffeeIstanbul)
     post('/results', {
       id: id,
       results: extractSuites(mocha.suite.suites),
-      coverage: [__coverage__]
+      coverage: coverage
     })
 
   })
