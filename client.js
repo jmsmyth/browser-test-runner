@@ -34,13 +34,14 @@ function extractSuites (suites) {
   })
 }
 
-function init () {
+function init (options) {
   var id = getParameterByName('id')
+
   mocha.suite.afterAll(function () {
     var coverage = []
-    if (__coverage__) coverage.push(__coverage__)
-    if (_$coffeeIstanbul) coverage.push(_$coffeeIstanbul)
-    post('/results', {
+    if (window.__coverage__) coverage.push(window.__coverage__)
+    if (window._$coffeeIstanbul) coverage.push(window._$coffeeIstanbul)
+    post('http://' + options.host + ':' + options.port + '/results', {
       id: id,
       results: extractSuites(mocha.suite.suites),
       coverage: coverage

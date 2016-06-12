@@ -61,13 +61,22 @@ function logError (err) {
 
 exports.run = function (options) {
   options = options || {}
+  var port = options.port || 10001
   var htmlFilename = options.htmlFilename
   var browserName = options.browserName || 'phantomjs'
+  var responseLimit = options.responseLimit || '100mb'
 
-  server.start({ids: [0]}).then((s) => {
+  console.log('Starting web server on port ' + port)
+  server.start({ids: [0], port: port, responseLimit: responseLimit}).then((s) => {
     launcher(function (err, launch) {
+      if (err) return logError(err)
       const id = uuid.v4()
-      launch('http://localhost:10001/' + htmlFilename + '?id=' + id, browserName, function (err, instance) {
+
+      console.log('launching ' + browserName)
+
+      launch('http://localhost:' + port + '/' + htmlFilename + '?id=' + id, browserName, function (err, instance) {
+        if (err) logError(err)
+
         s.events.on('result', (obj) => {
           var res = logResults(obj.results)
           if (obj.id === id) {
@@ -89,6 +98,6 @@ exports.run = function (options) {
         })
       })
     })
-  })
+  }).catch(logError)
 
 }

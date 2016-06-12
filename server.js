@@ -11,6 +11,7 @@ exports.start = (options) => {
   options = options || {}
   const sourceDir = options.sourceDir || '.'
   const port = options.port || 10001
+  const responseLimit = options.responseLimit || '100mb'
   const outputDir = options.outputDir || 'test-report'
 
   const events = new EventEmitter
@@ -45,7 +46,7 @@ exports.start = (options) => {
   return new Promise((resolve, reject) => {
     var server = app
       .use(express.static(sourceDir))
-      .use(bodyParser.json({limit: '100mb'}))
+      .use(bodyParser.json({limit: responseLimit}))
       .use(cors())
       .post('/results', resultHandler)
       .post('/error', errorHandler)
