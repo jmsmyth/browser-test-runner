@@ -1,32 +1,33 @@
-const path = require('path')
-const express = require('express')
-const bodyParser = require('body-parser')
-const cors = require('cors')
-const istanbul = require('istanbul')
-const EventEmitter = require('events')
+var path = require('path')
+var express = require('express')
+var bodyParser = require('body-parser')
+var cors = require('cors')
+var istanbul = require('istanbul')
+var EventEmitter = require('events')
+var Promise = require('bluebird')
 
-const app = express()
+var app = express()
 
-exports.start = (options) => {
+exports.start = function (options) {
   options = options || {}
-  const sourceDir = options.sourceDir || '.'
-  const port = options.port || 10001
-  const responseLimit = options.responseLimit || '100mb'
-  const outputDir = options.outputDir || 'test-report'
+  var sourceDir = options.sourceDir || '.'
+  var port = options.port || 10001
+  var responseLimit = options.responseLimit || '100mb'
+  var outputDir = options.outputDir || 'test-report'
 
-  const events = new EventEmitter
+  var events = new EventEmitter
 
   function resultHandler (req, res) {
-    const collector = new istanbul.Collector()
+    var collector = new istanbul.Collector()
 
-    req.body.coverage.forEach((c) => {
+    req.body.coverage.forEach(function (c) {
       collector.add(c)
     })
 
-    const reporter = new istanbul.Reporter(undefined, options.outputDir)
+    var reporter = new istanbul.Reporter(undefined, options.outputDir)
     reporter.add('html')
     reporter.add('lcov')
-    reporter.write(collector, false, () => {
+    reporter.write(collector, false, function () {
       console.log('All reports generated')
 
       res.status(200).end()
@@ -43,14 +44,14 @@ exports.start = (options) => {
     events.emit('error', req.body)
   }
 
-  return new Promise((resolve, reject) => {
+  return new Promise(function (resolve, reject) {
     var server = app
       .use(express.static(sourceDir))
       .use(bodyParser.json({limit: responseLimit}))
       .use(cors())
       .post('/results', resultHandler)
       .post('/error', errorHandler)
-      .listen(port, (err) => {
+      .listen(port, function (err) {
         err ? reject(err) : resolve({
           server: server,
           events: events

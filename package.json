@@ -6,6 +6,7 @@
   "author": "James Smyth <jmsmyth@users.noreply.github.com>",
   "license": "MIT",
   "dependencies": {
+    "bluebird": "^3.4.1",
     "body-parser": "^1.15.0",
     "browser-launcher2": "^0.4.6",
     "chalk": "^1.1.3",

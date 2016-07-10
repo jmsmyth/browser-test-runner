@@ -17,7 +17,7 @@ function logTests (tests, indent) {
 }
 
 function logSuites (suites, indent) {
-  suites.forEach((suite) => {
+  suites.forEach(function (suite) {
     console.log(indent + suite.title)
     logSuites(suite.suites, indent + '  ')
     logTests(suite.tests, indent + '  ')
@@ -67,17 +67,17 @@ exports.run = function (options) {
   var responseLimit = options.responseLimit || '100mb'
 
   console.log('Starting web server on port ' + port)
-  server.start({ids: [0], port: port, responseLimit: responseLimit}).then((s) => {
+  server.start({ids: [0], port: port, responseLimit: responseLimit}).then(function (s) {
     launcher(function (err, launch) {
       if (err) return logError(err)
-      const id = uuid.v4()
+      var id = uuid.v4()
 
       console.log('launching ' + browserName)
 
       launch('http://localhost:' + port + '/' + htmlFilename + '?id=' + id, browserName, function (err, instance) {
         if (err) logError(err)
 
-        s.events.on('result', (obj) => {
+        s.events.on('result', function (obj) {
           var res = logResults(obj.results)
           if (obj.id === id) {
             instance.stop(function (err) {
@@ -87,7 +87,7 @@ exports.run = function (options) {
           }
         })
 
-        s.events.on('error', (r) => {
+        s.events.on('error', function (r) {
           logError(r.error)
           if (r.id === id) {
             instance.stop(function (err) {
