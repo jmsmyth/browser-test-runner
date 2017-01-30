@@ -1,3 +1,5 @@
+"use strict"
+
 #!/usr/bin/env node
 if (process.argv[2] === 'watch') {
   const server = require('../server')

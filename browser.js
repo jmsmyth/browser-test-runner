@@ -1,3 +1,5 @@
+"use strict"
+
 const server = require('./server')
 const launcher = require('browser-launcher2')
 const chalk = require('chalk')

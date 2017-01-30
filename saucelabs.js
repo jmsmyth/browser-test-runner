@@ -1,3 +1,5 @@
+"use strict"
+
 const wd = require('wd')
 const uuid = require('uuid')
 const server = require('./server')

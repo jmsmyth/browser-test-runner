@@ -1,3 +1,5 @@
+"use strict"
+
 const phantom = require('phantom')
 const uuid = require('uuid')
 const server = require('./server')
