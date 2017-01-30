@@ -96,7 +96,7 @@ function init () {
     var coverage = []
     if (window.__coverage__) coverage.push(window.__coverage__)
     if (window._$coffeeIstanbul) coverage.push(window._$coffeeIstanbul)
-    post('http://localhost:10001/results', {
+    post('/results', {
       id: id,
       results: extractSuites(mocha.suite.suites),
       coverage: coverage
