@@ -1,6 +1,6 @@
 {
   "name": "browser-test-runner",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Run in browser test from the command line",
   "main": "index.js",
   "author": "James Smyth <jmsmyth@users.noreply.github.com>",
