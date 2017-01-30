@@ -11,10 +11,63 @@ function getParameterByName (name, url) {
 }
 
 function post (url, data) {
-  var XHR = new XMLHttpRequest()
-  XHR.open('POST', url, true)
-  XHR.setRequestHeader('Content-type', 'application/json')
-  XHR.send(JSON.stringify(data))
+  try {
+    var stringifiedData = JSON.stringify(data)
+    return fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: stringifiedData
+    })
+  } catch (err) {
+    console.log(err, data)
+    return post('/error', {
+      id: id,
+      error: err.toString()
+    })
+  }
+}
+
+var id = getParameterByName('id')
+
+window.addEventListener('error', function (evt) {
+  // XXX: remove this and add make init return a promise that contains info
+  document.querySelector('body').innerText = evt.message
+
+  console.log(evt)
+
+  post('/error', {
+    id: id,
+    error: evt.message,
+    url: evt.filename,
+    lineNumber: evt.lineno,
+    columnNumber: evt.colno
+  })
+  return false
+})
+
+function checkArrayForError(arr) {
+  if(Array.isArray(arr)) {
+    var item = arr.filter(function (x) { return x.err })[0]
+    if (item) {
+      return {
+        message: item.err.message,
+        stack: item.err.stack
+      }
+    }
+  }
+}
+
+function getErrorFromSuite (suite) {
+  var beforeErr = checkArrayForError(suite._before)
+  if (beforeErr) return beforeErr
+  var beforeEachErr = checkArrayForError(suite._beforeEach)
+  if (beforeEachErr) return beforeEachErr
+  var afterErr = checkArrayForError(suite._after)
+  if (afterErr) return afterErr
+  var afterEachErr = checkArrayForError(suite._afterEach)
+  if (afterEachErr) return afterEachErr
 }
 
 function extractSuites (suites) {
@@ -22,43 +75,35 @@ function extractSuites (suites) {
     return {
       title: suite.title,
       suites: extractSuites(suite.suites || []),
+      err: getErrorFromSuite(suite),
       tests: suite.tests.map(function (test) {
         return {
           title: test.title,
           state: test.state,
           duration: test.duration,
-          err: test.err
+          err: test.err ? {
+            message: test.err.message,
+            stack: test.err.stack
+          } : undefined
         }
       })
     }
   })
 }
 
-function init (options) {
-  var id = getParameterByName('id')
-
+function init () {
   mocha.suite.afterAll(function () {
     var coverage = []
     if (window.__coverage__) coverage.push(window.__coverage__)
     if (window._$coffeeIstanbul) coverage.push(window._$coffeeIstanbul)
-    post('http://' + options.host + ':' + options.port + '/results', {
+    post('http://localhost:10001/results', {
       id: id,
       results: extractSuites(mocha.suite.suites),
       coverage: coverage
     })
-
   })
 }
 
 window.BrowserTestRunner = {
   init: init
-}
-
-window.onerror = function (message, url, lineNumber) {
-  post('/error', {
-    error: message,
-    url: url,
-    lineNumber: lineNumber
-  })
-  return true
 }
