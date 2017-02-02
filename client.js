@@ -24,7 +24,10 @@ function post (url, data) {
     console.log(err, data)
     return post('/error', {
       id: id,
-      error: err.toString()
+      error: {
+        message: err.message,
+        stack: err.stack
+      }
     })
   }
 }
@@ -39,7 +42,10 @@ window.addEventListener('error', function (evt) {
 
   post('/error', {
     id: id,
-    error: evt.message,
+    error: {
+      message: evt.message,
+      stack: evt.stack
+    },
     url: evt.filename,
     lineNumber: evt.lineno,
     columnNumber: evt.colno
@@ -77,13 +83,14 @@ function extractSuites (suites) {
       suites: extractSuites(suite.suites || []),
       err: getErrorFromSuite(suite),
       tests: suite.tests.map(function (test) {
+        console.log(test.err)
         return {
           title: test.title,
           state: test.state,
           duration: test.duration,
           err: test.err ? {
             message: test.err.message,
-            stack: test.err.stack
+            stack: test.err.stack || ""
           } : undefined
         }
       })

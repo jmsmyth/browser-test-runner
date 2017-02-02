@@ -18,6 +18,7 @@ function logTests (tests, indent) {
     } else if (test.state === 'failed') {
       console.log(chalk.red(indent + '- ' + test.title))
       if (test.err) {
+        console.log(chalk.red(test.err))
         console.log(chalk.gray(test.err.stack.split('\n').map(line => {
           return indent + '  ' + line
         }).join('\n')))
