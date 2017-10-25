@@ -21,7 +21,7 @@ module.exports = function (options = {}) {
   // })
 
   console.log('Starting web server on port ' + port)
-  server.start({ids: [0], port: port, responseLimit: responseLimit}).then(s => {
+  server.start({ port: port, responseLimit: responseLimit }).then(s => {
     launcher((err, launch) => {
       if (err) return logError(err)
 
