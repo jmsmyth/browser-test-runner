@@ -7,7 +7,6 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const istanbul = require('istanbul')
 const EventEmitter = require('events')
-const Promise = require('bluebird')
 
 const app = express()
 
