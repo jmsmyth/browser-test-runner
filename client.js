@@ -38,8 +38,6 @@ window.addEventListener('error', function (evt) {
   // XXX: remove this and add make init return a promise that contains info
   document.querySelector('body').innerText = evt.message
 
-  console.log(evt)
-
   post('/error', {
     id: id,
     error: {
@@ -83,7 +81,6 @@ function extractSuites (suites) {
       suites: extractSuites(suite.suites || []),
       err: getErrorFromSuite(suite),
       tests: suite.tests.map(function (test) {
-        console.log(test.err)
         return {
           title: test.title,
           state: test.state,
