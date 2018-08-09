@@ -5,17 +5,18 @@
   "main": "index.js",
   "author": "James Smyth <jmsmyth@users.noreply.github.com>",
   "license": "MIT",
+  "repository": "https://github.com/jmsmyth/browser-test-runner",
   "dependencies": {
-    "body-parser": "^1.18.2",
+    "body-parser": "^1.18.3",
     "browser-launcher2": "^0.4.6",
-    "chalk": "^2.3.0",
+    "chalk": "^2.4.1",
     "cors": "^2.8.4",
-    "express": "^4.16.2",
+    "express": "^4.16.3",
     "istanbul": "^0.4.5",
-    "phantom": "^4.0.5",
-    "saucelabs": "^1.4.0",
-    "uuid": "^3.1.0",
-    "wd": "^1.4.1"
+    "phantom": "^6.0.3",
+    "saucelabs": "^1.5.0",
+    "uuid": "^3.3.2",
+    "wd": "^1.10.3"
   },
   "bin": {
     "browser-test-runner": "./bin/cli.js"
