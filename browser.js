@@ -1,7 +1,7 @@
-"use strict"
+'use strict'
 
 const server = require('./server')
-const launcher = require('browser-launcher2')
+const launcher = require('james-browser-launcher')
 const chalk = require('chalk')
 const uuid = require('uuid')
 
@@ -56,5 +56,4 @@ module.exports = function (options = {}) {
       })
     })
   }).catch(logError)
-
 }
