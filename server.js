@@ -88,7 +88,7 @@ exports.start = function (options) {
   const events = new EventEmitter
 
   function resultHandler (req, res) {
-    console.log('Building coverage resports')
+    console.log('Building coverage reports')
     const collector = new istanbul.Collector()
 
     req.body.coverage.forEach(c => {
