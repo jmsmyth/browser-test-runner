@@ -1,7 +1,7 @@
 'use strict'
 
 const server = require('./server')
-const launcher = require('james-browser-launcher')
+const launcher = require('@james-proxy/james-browser-launcher')
 const chalk = require('chalk')
 const uuid = require('uuid')
 
