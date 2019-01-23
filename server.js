@@ -99,10 +99,20 @@ exports.start = function (options) {
     cfg.reporting.dir = () => outputDir
     const reporter = createReporter(cfg)
 
+    const results = req.body.results
+    logResults(results)
+    const counts = countResults(results)
+
     reporter.addAll(['html', 'lcovonly', 'text'])
     reporter.write(map)
 
     res.status(200).end()
+
+    events.emit('result', {
+      id: req.body.id,
+      results: req.body.results,
+      counts
+    })
   }
 
   function logError (obj) {
