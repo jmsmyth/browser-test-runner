@@ -1,6 +1,6 @@
 {
   "name": "browser-test-runner",
-  "version": "0.6.6",
+  "version": "0.7.0",
   "description": "Run in browser test from the command line",
   "main": "index.js",
   "author": "James Smyth <jmsmyth@users.noreply.github.com>",
@@ -13,6 +13,10 @@
     "cors": "^2.8.5",
     "express": "^4.16.4",
     "istanbul": "^0.4.5",
+    "istanbul-api": "^2.0.6",
+    "istanbul-lib-instrument": "^3.0.0",
+    "istanbul-lib-report": "^2.0.2",
+    "istanbul-reports": "^2.0.1",
     "phantom": "^6.0.3",
     "saucelabs": "^1.5.0",
     "uuid": "^3.3.2",

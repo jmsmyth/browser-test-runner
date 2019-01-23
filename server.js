@@ -1,11 +1,12 @@
-"use strict"
+'use strict'
 
 const path = require('path')
 const chalk = require('chalk')
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
-const istanbul = require('istanbul')
+const libCoverage = require('istanbul-lib-coverage')
+const { createReporter, config } = require('istanbul-api')
 const EventEmitter = require('events')
 
 const app = express()
@@ -30,7 +31,7 @@ function logTests (tests, indent) {
 
 function logSuites (suites, indent) {
   suites.forEach(suite => {
-    if(suite.err) {
+    if (suite.err) {
       console.log(chalk.red(indent + '- ' + suite.title))
       if (suite.err) {
         console.log(chalk.gray(suite.err.stack.split('\n').map(line => {
@@ -61,7 +62,7 @@ function countResults (suites) {
       }
     })
   })
-  return {count: count, passed: passed}
+  return { count: count, passed: passed }
 }
 
 function logResults (results) {
@@ -83,36 +84,25 @@ exports.start = function (options) {
   const sourceDir = options.sourceDir || '.'
   const port = options.port || 10001
   const responseLimit = options.responseLimit || '100mb'
-  const outputDir = options.outputDir || 'test-report'
+  const outputDir = options.outputDir || 'coverage'
 
-  const events = new EventEmitter
+  const events = new EventEmitter()
 
   function resultHandler (req, res) {
     console.log('Building coverage reports')
-    const collector = new istanbul.Collector()
-
+    const map = libCoverage.createCoverageMap({})
     req.body.coverage.forEach(c => {
-      collector.add(c)
+      map.merge(c)
     })
 
-    const reporter = new istanbul.Reporter(undefined, options.outputDir)
-    reporter.add('html')
-    reporter.add('lcov')
-    reporter.write(collector, false, () => {
-      console.log('All reports generated')
+    const cfg = config.loadFile()
+    cfg.reporting.dir = () => outputDir
+    const reporter = createReporter(cfg)
 
-      res.status(200).end()
+    reporter.addAll(['html', 'lcovonly', 'text'])
+    reporter.write(map)
 
-      const results = req.body.results
-      logResults(results)
-      const counts = countResults(results)
-
-      events.emit('result', {
-        id: req.body.id,
-        results: req.body.results,
-        counts
-      })
-    })
+    res.status(200).end()
   }
 
   function logError (obj) {
@@ -129,7 +119,7 @@ exports.start = function (options) {
   return new Promise((resolve, reject) => {
     const server = app
       .use(express.static(sourceDir))
-      .use(bodyParser.json({limit: responseLimit}))
+      .use(bodyParser.json({ limit: responseLimit }))
       .use(cors())
       .post('/results', resultHandler)
       .post('/error', errorHandler)
