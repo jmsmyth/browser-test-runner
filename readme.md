@@ -1,3 +1,28 @@
 # browser-test-runner
 
-[WIP] Write tests as a web page, run from the command line for ci.
+Write tests as a web page, run from the command line for ci.
+Outputs coverage for istanbul instrumented code.
+
+## Install
+
+```bash
+npm install browser-test-runner
+```
+
+## Usage
+
+Run tests on a browser:
+
+```bash
+browser-test-runner chrome 'target/test/index.html'
+browser-test-runner firefox 'target/test/index.html'
+browser-test-runner safari 'target/test/index.html'
+browser-test-runner chrome-headless 'target/test/index.html'
+```
+
+Host the test file, and re-run the tests on any browser that has the page open
+whenever the tests are changed
+
+```bash
+browser-test-runner start 'target/test/index.html'
+```

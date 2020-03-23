@@ -7,8 +7,8 @@ module.exports = () => {
   } else if (process.argv[2] === 'saucelabs') {
     const runner = require('./saucelabs')
     runner({ urlPath: process.argv[3] })
-  } else if (process.argv[2] === 'phantomjs') {
-    const runner = require('./phantom')
+  } else if (process.argv[2] === 'chrome-headless') {
+    const runner = require('./puppeteer')
     runner({ urlPath: process.argv[3] })
   } else {
     const runner = require('./browser')
