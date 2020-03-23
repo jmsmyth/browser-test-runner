@@ -11,17 +11,24 @@ const EventEmitter = require('events')
 
 const app = express()
 
-function logTests (tests, indent) {
-  tests.forEach(test => {
+function logTests(tests, indent) {
+  tests.forEach((test) => {
     if (test.state === 'passed') {
       console.log(chalk.green(indent + '+ ' + test.title))
     } else if (test.state === 'failed') {
       console.log(chalk.red(indent + '- ' + test.title))
       if (test.err) {
         console.log(chalk.red(test.err))
-        console.log(chalk.gray(test.err.stack.split('\n').map(line => {
-          return indent + '  ' + line
-        }).join('\n')))
+        console.log(
+          chalk.gray(
+            test.err.stack
+              .split('\n')
+              .map((line) => {
+                return indent + '  ' + line
+              })
+              .join('\n')
+          )
+        )
       }
     } else {
       console.log(chalk.yellow(indent + '+ ' + test.title))
@@ -29,14 +36,21 @@ function logTests (tests, indent) {
   })
 }
 
-function logSuites (suites, indent) {
-  suites.forEach(suite => {
+function logSuites(suites, indent) {
+  suites.forEach((suite) => {
     if (suite.err) {
       console.log(chalk.red(indent + '- ' + suite.title))
       if (suite.err) {
-        console.log(chalk.gray(suite.err.stack.split('\n').map(line => {
-          return indent + '  ' + line
-        }).join('\n')))
+        console.log(
+          chalk.gray(
+            suite.err.stack
+              .split('\n')
+              .map((line) => {
+                return indent + '  ' + line
+              })
+              .join('\n')
+          )
+        )
       }
     } else {
       console.log(indent + suite.title)
@@ -46,14 +60,14 @@ function logSuites (suites, indent) {
   })
 }
 
-function countResults (suites) {
+function countResults(suites) {
   let count = 0
   let passed = 0
-  suites.forEach(suite => {
+  suites.forEach((suite) => {
     const res = countResults(suite.suites)
     count += res.count
     passed += res.passed
-    suite.tests.forEach(test => {
+    suite.tests.forEach((test) => {
       if (test.state === 'passed' || test.state === 'failed') {
         count++
       }
@@ -65,15 +79,19 @@ function countResults (suites) {
   return { count: count, passed: passed }
 }
 
-function logResults (results) {
+function logResults(results) {
   logSuites(results, '')
   const res = countResults(results)
   const failureCount = res.count - res.passed
 
   if (failureCount > 0) {
-    console.log(chalk.red('\n' + failureCount + '/' + res.count + ' tests failed'))
+    console.log(
+      chalk.red('\n' + failureCount + '/' + res.count + ' tests failed')
+    )
   } else {
-    console.log(chalk.green('\n' + res.passed + '/' + res.count + ' tests passed'))
+    console.log(
+      chalk.green('\n' + res.passed + '/' + res.count + ' tests passed')
+    )
   }
 
   return res
@@ -88,10 +106,10 @@ exports.start = function (options) {
 
   const events = new EventEmitter()
 
-  function resultHandler (req, res) {
+  function resultHandler(req, res) {
     console.log('Building coverage reports')
     const map = libCoverage.createCoverageMap({})
-    req.body.coverage.forEach(c => {
+    req.body.coverage.forEach((c) => {
       map.merge(c)
     })
 
@@ -111,15 +129,15 @@ exports.start = function (options) {
     events.emit('result', {
       id: req.body.id,
       results: req.body.results,
-      counts
+      counts,
     })
   }
 
-  function logError (obj) {
+  function logError(obj) {
     console.log(chalk.red(obj.url + ' ' + obj.lineNumber + ' ' + obj.error))
   }
 
-  function errorHandler (req, res) {
+  function errorHandler(req, res) {
     const errorObj = req.body
     logError(errorObj)
     events.emit('page-error', errorObj)
@@ -134,10 +152,12 @@ exports.start = function (options) {
       .post('/results', resultHandler)
       .post('/error', errorHandler)
       .listen(port, function (err) {
-        err ? reject(err) : resolve({
-          server: server,
-          events: events
-        })
+        err
+          ? reject(err)
+          : resolve({
+              server: server,
+              events: events,
+            })
       })
   })
 }

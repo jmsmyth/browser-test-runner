@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 const phantom = require('phantom')
 const uuid = require('uuid')
@@ -11,18 +11,19 @@ module.exports = function (options = {}) {
   const responseLimit = options.responseLimit || '100mb'
 
   console.log('Starting web server on port ' + port)
-  server.start({
-    ids: [0],
-    port,
-    responseLimit,
-    sourceDir
-  }).then(s => {
-    const id = uuid.v4()
+  server
+    .start({
+      ids: [0],
+      port,
+      responseLimit,
+      sourceDir,
+    })
+    .then((s) => {
+      const id = uuid.v4()
 
-    const url = 'http://localhost:' + port + '/' + urlPath + '?id=' + id
-    return phantom.create()
-      .then(instance => {
-        instance.createPage().then(page => {
+      const url = 'http://localhost:' + port + '/' + urlPath + '?id=' + id
+      return phantom.create().then((instance) => {
+        instance.createPage().then((page) => {
           s.events.on('result', (obj) => {
             if (obj.id === id) {
               instance.exit().then(() => {
@@ -42,9 +43,9 @@ module.exports = function (options = {}) {
           })
 
           console.log('Launching ' + url)
-          page.open(url).catch(err => console.error(err))
+          page.open(url).catch((err) => console.error(err))
         })
       })
-
-  }).catch((err) => console.error(err))
+    })
+    .catch((err) => console.error(err))
 }

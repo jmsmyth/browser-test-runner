@@ -1,5 +1,5 @@
 // http://stackoverflow.com/a/901144
-function getParameterByName (name, url) {
+function getParameterByName(name, url) {
   if (!url) url = window.location.href
   url = url.toLowerCase() // This is just to avoid case sensitiveness
   name = name.replace(/[\[\]]/g, '\\$&').toLowerCase() // This is just to avoid case sensitiveness for query parameter name
@@ -10,15 +10,15 @@ function getParameterByName (name, url) {
   return decodeURIComponent(results[2].replace(/\+/g, ' '))
 }
 
-function post (url, data) {
+function post(url, data) {
   try {
     var stringifiedData = JSON.stringify(data)
     return fetch(url, {
       method: 'POST',
       headers: {
-        'Content-type': 'application/json'
+        'Content-type': 'application/json',
       },
-      body: stringifiedData
+      body: stringifiedData,
     })
   } catch (err) {
     console.log(err, data)
@@ -26,8 +26,8 @@ function post (url, data) {
       id: id,
       error: {
         message: err.message,
-        stack: err.stack
-      }
+        stack: err.stack,
+      },
     })
   }
 }
@@ -42,28 +42,30 @@ window.addEventListener('error', function (evt) {
     id: id,
     error: {
       message: evt.message,
-      stack: evt.stack
+      stack: evt.stack,
     },
     url: evt.filename,
     lineNumber: evt.lineno,
-    columnNumber: evt.colno
+    columnNumber: evt.colno,
   })
   return false
 })
 
 function checkArrayForError(arr) {
-  if(Array.isArray(arr)) {
-    var item = arr.filter(function (x) { return x.err })[0]
+  if (Array.isArray(arr)) {
+    var item = arr.filter(function (x) {
+      return x.err
+    })[0]
     if (item) {
       return {
         message: item.err.message,
-        stack: item.err.stack
+        stack: item.err.stack,
       }
     }
   }
 }
 
-function getErrorFromSuite (suite) {
+function getErrorFromSuite(suite) {
   var beforeErr = checkArrayForError(suite._before)
   if (beforeErr) return beforeErr
   var beforeEachErr = checkArrayForError(suite._beforeEach)
@@ -74,7 +76,7 @@ function getErrorFromSuite (suite) {
   if (afterEachErr) return afterEachErr
 }
 
-function extractSuites (suites) {
+function extractSuites(suites) {
   return suites.map(function (suite) {
     return {
       title: suite.title,
@@ -85,17 +87,19 @@ function extractSuites (suites) {
           title: test.title,
           state: test.state,
           duration: test.duration,
-          err: test.err ? {
-            message: test.err.message,
-            stack: test.err.stack || ""
-          } : undefined
+          err: test.err
+            ? {
+                message: test.err.message,
+                stack: test.err.stack || '',
+              }
+            : undefined,
         }
-      })
+      }),
     }
   })
 }
 
-function init () {
+function init() {
   mocha.suite.afterAll(function () {
     var coverage = []
     if (window.__coverage__) coverage.push(window.__coverage__)
@@ -103,11 +107,11 @@ function init () {
     post('/results', {
       id: id,
       results: extractSuites(mocha.suite.suites),
-      coverage: coverage
+      coverage: coverage,
     })
   })
 }
 
 window.BrowserTestRunner = {
-  init: init
+  init: init,
 }

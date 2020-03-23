@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 module.exports = () => {
   if (process.argv[2] === 'start') {
