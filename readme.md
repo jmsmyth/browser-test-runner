@@ -26,3 +26,9 @@ whenever the tests are changed
 ```bash
 browser-test-runner start 'target/test/index.html'
 ```
+
+## Changelog
+
+### 0.8.0
+
+- Replace `browser-test-runner phantom` with `browser-test-runner chrome-headless`, which is backed by puppeteer
